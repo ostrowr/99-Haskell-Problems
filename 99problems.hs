@@ -1,3 +1,7 @@
+import System.Random
+import System.IO.Unsafe
+import Data.List
+
 --Problem 1: Retrieve the last element from a list
 myLast :: [a] -> a
 myLast [x] = x
@@ -12,7 +16,7 @@ myButLast xs = myLast (init xs)
 
 
 --Problem 3: Find the kth element of a list
-	-- if k > length, returns the last element
+    -- if k > length, returns the last element
 elementAt :: [a] -> Int -> a
 elementAt xs k = myLast (take k xs)
 --
@@ -41,7 +45,9 @@ myPalindrome xs = myPalindrome (init (tail xs)) && head xs == last xs
 
 
 --Problem 7: Flatten a nested list structure
-
+data NestedList a = Elem a | List [NestedList a]
+myFlatten :: NestedList a -> [a]
+myFlatten (Elem n) = [n]
 
 --Problem 8: Eliminate consecutive duplicates of list elements
 myCompress :: (Eq a) => [a] -> [a]
@@ -167,11 +173,43 @@ myInsertAt x xs n = take (n - 1) xs ++ [x] ++ drop (n - 1) xs
 
 
 --Problem 22: Create a list containing all integers within a given range.
+myRange :: Int -> Int -> [Int]
+myRange a b = [a..b]
+--
+
+
 --Problem 23: Extract a given number of randomly selected elements from a list.
+myRandomSelect :: [a] -> Int -> [a]
+myRandomSelect _ 0 = []
+myRandomSelect [] _ = []
+myRandomSelect xs n = 
+    let index = myRandom 0 (length xs - 1)
+    in [xs !! index] ++ myRandomSelect (snd (myRemoveAt xs (index + 1))) (n - 1)
+--
+
+
 --Problem 24: Lotto: Draw N different random numbers from the set 1..M.
+myRandomSelectFromRange :: Int -> Int -> [Int]
+myRandomSelectFromRange n maxLim = 
+    myRandomSelect [1..maxLim] n
+
+
 --Problem 25: Generate a random permutation of the elements of a list.
+myRandomPermute :: [a] -> [a]
+myRandomPermute xs = myRandomSelect xs (length xs)
+--
+
+
+myRandom :: Int -> Int -> Int
+--Don't do this, evidently. Must figure out IO. 
+myRandom a b = unsafePerformIO (randomRIO (a, b)) 
+
+
+
 --Problem 26: Generate the combinations of K distinct objects chosen from the N elements of a list
 --Problem 27: Group the elements of a set into disjoint subsets.
+
+
 
 
 --Problem 28a
@@ -298,15 +336,117 @@ myGoldbachList minLimit maxLimit =
     [(a, fst gb, snd gb) | a <- [minLim, minLim + 2..maxLimit], let gb = myGoldbach a]
     where minLim = minLimit + minLimit `mod` 2
 
+
 myGoldbachList' :: Int -> Int -> Int -> [(Int, Int, Int)]
 myGoldbachList' minLimit maxLimit primesOver =
     [(a, b, c) | (a, b, c) <- myGoldbachList minLimit maxLimit, b > primesOver, a > primesOver]
 --
 
 
-generatePrimeList :: [Int] -- include an option for limit
+-- Helper to generate primes
+generatePrimeList :: [Int]
 generatePrimeList =
      2:[a | a <- [1, 3..], myIsPrime a]
+--
+
+
+--Problem 42: DOES NOT EXIST
+--Problem 43: DOES NOT EXIST
+--Problem 44: DOES NOT EXIST
+--Problem 45: DOES NOT EXIST
+
+
+--Problem 46: NOT FINISHED
+myNot :: Bool -> Bool
+myNot False = True
+myNot True = False
+
+myAnd, myOr, myNand, myNor, myXor, myImpl, myEqu :: Bool -> Bool -> Bool
+
+myAnd True True = True
+myAnd _ _ = False
+
+myOr False False = False
+myOr _ _ = True
+
+myNand a b = myNot (myAnd a b)
+
+myNor a b = myNot (myOr a b)
+
+myXor True True = False
+myXor False False = False
+myXor _ _ = True
+
+myImpl a b = (myNot a) `myOr` b
+
+myEqu True True = True
+myEqu False False = True
+myEqu _ _ = False
+
+
+
+--Problem 90: Eight Queens
+myNQueens :: Int -> [[Int]]
+--each element of each list represents
+--its position in the column. Assuming n is
+--The number of queens to place as well as the
+--dimension of the board.
+myNQueens n = [x | x <- permutations [1..n], queensSafe x]
+
+
+queensSafe :: [Int] -> Bool
+queensSafe [] = True
+queensSafe l@(x:xs)
+    | firstQueenSafe l == True = queensSafe xs
+    | otherwise = False
+
+
+
+firstQueenSafe :: [Int] -> Bool
+firstQueenSafe l@(x:xs) =
+    let unsafe1 = [x, x - 1 .. x - length l]
+        unsafe2 = [x, x + 1 .. x + length l]
+        zipped = zip (tail unsafe1) (tail l) ++ zip (tail unsafe2) (tail l)
+        countMatches = length [x | x <- zipped, fst x == snd x]
+    in if countMatches == 0 then True else False
+--
+
+
+--Problem 91: Knight's tour
+myKnightsTour :: Int -> (Int, Int) -> [(Int, Int)]
+myKnightsTour n end =
+    myKTRecursive n end (myCombineLists [1..8] [1..8]) []
+
+
+myKTRecursive :: Int -> (Int, Int) -> [(Int, Int)] -> [(Int, Int)]
+myKTRecursive n end mustreach path =
+    | length mustreach == 0 path
+    | -- 4 recursive calls for possiblepaths
+
+
+
+
+myCombineLists :: [a] -> [a] -> [(a, a)]
+myCombineLists a b =
+    [(fst x, snd x) | x <- (cycle a) `zip` (myRepli b (length a))]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
