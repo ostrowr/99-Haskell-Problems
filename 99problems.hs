@@ -1,6 +1,7 @@
 import System.Random
 import System.IO.Unsafe
 import Data.List
+import Data.Char
 
 --Problem 1: Retrieve the last element from a list
 myLast :: [a] -> a
@@ -413,16 +414,44 @@ firstQueenSafe l@(x:xs) =
 
 
 --Problem 91: Knight's tour
-myKnightsTour :: Int -> (Int, Int) -> [(Int, Int)]
-myKnightsTour n end =
-    myKTRecursive n end (myCombineLists [1..8] [1..8]) []
+--myKnightsTour :: Int -> (Int, Int) -> [(Int, Int)]
+--myKnightsTour n end =
+--    myKTRecursive n end (myCombineLists [1..8] [1..8]) []
 
 
-myKTRecursive :: Int -> (Int, Int) -> [(Int, Int)] -> [(Int, Int)]
-myKTRecursive n end mustreach path =
-    | length mustreach == 0 path
-    | -- 4 recursive calls for possiblepaths
+--myKTRecursive :: Int -> (Int, Int) -> [(Int, Int)] -> [(Int, Int)]
+--myKTRecursive n end mustreach path =
+--    | length mustreach == 0 = path
+--    | -- 4 recursive calls for possiblepaths
 
+
+--Problem 95: English Number Words
+fullWords :: Int -> String
+fullWords n
+    | n < 10 = digitToString n
+    | otherwise = fullWords (quot (n - lastDigit) 10) ++ "-" ++ digitToString (mod n 10)
+        where lastDigit = mod n 10
+              digitToString x = 
+                ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine"] !! x
+--
+
+
+--Problem 96: Syntax checker
+identifier :: String -> Bool
+identifier "" = True
+identifier (x:xs) 
+    | isLetter x == True = identifier' xs
+    | otherwise = False
+
+
+identifier' :: String -> Bool
+identifier' "" = True
+identifier' (x:xs)
+    | isLetter x = identifier' xs
+    | isDigit x = identifier' xs
+    | x == '-' && length xs > 0 && (isLetter (head xs) || isDigit (head xs)) = identifier' (tail xs)
+    | otherwise = False
+--
 
 
 
@@ -495,7 +524,5 @@ sumMultiples limit mult1 mult2 =
 --    | even n && n < 0 = 
 
 
-main = do 
-    putStrLn "Please enter your name: "
-    name <- getLine
-    putStrLn ("Hello, " ++ name ++ ", how are you?")
+main :: IO()
+main = print $ length $ myNQueens 10
