@@ -45,10 +45,11 @@ myPalindrome xs = myPalindrome (init (tail xs)) && head xs == last xs
 --
 
 
---Problem 7: Flatten a nested list structure
-data NestedList a = Elem a | List [NestedList a]
-myFlatten :: NestedList a -> [a]
-myFlatten (Elem n) = [n]
+----Problem 7: Flatten a nested list structure
+--data NestedList a = Elem a | List [NestedList a]
+--myFlatten :: NestedList a -> [a]
+--myFlatten (Elem n) = [n]
+
 
 --Problem 8: Eliminate consecutive duplicates of list elements
 myCompress :: (Eq a) => [a] -> [a]
